@@ -4,12 +4,20 @@ export default {
     const cap = url.searchParams.get("cap");
     const query = url.searchParams.get("query");
 
+    // Helper per risposte JSON con CORS
+    const jsonResponse = (data, status = 200) =>
+      new Response(JSON.stringify(data), {
+        status,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        }
+      });
+
     // Endpoint /cap
     if (url.pathname === "/cap") {
       if (!cap) {
-        return new Response(JSON.stringify({ error: "CAP mancante" }), {
-          headers: { "Content-Type": "application/json" }
-        });
+        return jsonResponse({ error: "CAP mancante" }, 400);
       }
 
       const country = detectCountry(cap);
@@ -17,9 +25,7 @@ export default {
       const response = await fetch(apiUrl);
 
       if (!response.ok) {
-        return new Response(JSON.stringify([]), {
-          headers: { "Content-Type": "application/json" }
-        });
+        return jsonResponse([]);
       }
 
       const data = await response.json();
@@ -34,28 +40,26 @@ export default {
         }
       ];
 
-      return new Response(JSON.stringify(result), {
-        headers: { "Content-Type": "application/json" }
-      });
+      return jsonResponse(result);
     }
 
-    // Endpoint /search (base vuota, da estendere)
+    // Endpoint /search
     if (url.pathname === "/search") {
       if (!query) {
-        return new Response(JSON.stringify({ error: "Parametro query mancante" }), {
-          headers: { "Content-Type": "application/json" }
-        });
+        return jsonResponse({ error: "Parametro query mancante" }, 400);
       }
 
-      return new Response(JSON.stringify({
+      return jsonResponse({
         input: query,
         results: []
-      }), {
-        headers: { "Content-Type": "application/json" }
       });
     }
 
-    return new Response("NodoDigitale Proxy API");
+    return new Response("NodoDigitale Proxy API", {
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+    });
   }
 };
 
@@ -70,4 +74,3 @@ function detectCountry(cap) {
   if (/^[A-Z]{1,2}\d/.test(cap)) return "gb"; // UK
   return "it"; // Fallback
 }
-
