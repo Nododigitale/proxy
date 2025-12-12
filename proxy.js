@@ -1,6 +1,6 @@
 async function lookupCap(cap, country = "IT") {
   try {
-    const url = `https://api.spedirecomodo.it/v1/lookup/cap?cap=${cap}&country=${country}`;
+    const url = `https://www.spedirecomodo.it/api/v1/lookup/cap?cap=${cap}&country=${country}`;
 
     const response = await fetch(url, {
       headers: {
