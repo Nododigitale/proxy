@@ -3,7 +3,9 @@ const CAP_ITALIA = {
   "20100": { city: "Milano", province: "MI", region: "Lombardia", frazioni: [] },
   "80134": { city: "Napoli", province: "NA", region: "Campania", frazioni: [] },
   "00100": { city: "Roma", province: "RM", region: "Lazio", frazioni: [] },
-  "28921": { city: "Verbania", province: "VB", region: "Piemonte", frazioni: [] }
+  "28921": { city: "Verbania", province: "VB", region: "Piemonte", frazioni: [] },
+  "28922": { city: "Verbania", province: "VB", region: "Piemonte", frazioni: [] },
+  "28923": { city: "Verbania", province: "VB", region: "Piemonte", frazioni: [] }
 };
 
 export default {
@@ -86,14 +88,20 @@ export default {
   }
 };
 
-// Riconoscimento automatico del paese dal CAP
+// ✅ Nuova funzione detectCountry() corretta
 function detectCountry(cap) {
-  if (/^\d{5}$/.test(cap)) {
-    if (cap.startsWith("75")) return "fr";
-    if (cap.startsWith("10") || cap.startsWith("80")) return "de";
-    if (cap.startsWith("28") || cap.startsWith("20")) return "es";
-    return "it";
-  }
+  // UK
   if (/^[A-Z]{1,2}\d/.test(cap)) return "gb";
+
+  // Francia (75xxx)
+  if (/^\d{5}$/.test(cap) && cap.startsWith("75")) return "fr";
+
+  // Germania (10xxx, 80xxx)
+  if (/^\d{5}$/.test(cap) && (cap.startsWith("10") || cap.startsWith("80"))) return "de";
+
+  // Spagna (01001–52999)
+  if (/^\d{5}$/.test(cap) && (cap >= "01001" && cap <= "52999")) return "es";
+
+  // ✅ Tutto il resto → Italia
   return "it";
 }
